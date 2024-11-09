@@ -71,7 +71,7 @@ The dataset should be a CSV file named `data_ml_1.csv` located in the `dataset` 
 
 ## Project Structure
 
-- `script_name.py`: The main script containing data processing, model training, and evaluation.
+- `main.py`: The main script containing data processing, model training, and evaluation.
 - `dataset/`: Directory containing the dataset CSV file.
 - `output/`: Directory where all plots and result files will be saved.
 - `requirements.txt`: List of required Python packages.
