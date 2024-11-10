@@ -19,7 +19,7 @@ Bug tracking systems often contain reports that need to be categorized into mult
 
 ## Dataset
 
-The dataset should be a CSV file named `data_ml_1.csv` located in the `dataset` directory. It must contain the following columns:
+The dataset should be a CSV file named `dataset.csv` located in the `root` directory. It must contain the following columns:
 
 - `report`: The textual description of the bug report.
 - `type_blocker`, `type_bug`, `type_documentation`, `type_enhancement`: Binary columns indicating the presence of each label.
