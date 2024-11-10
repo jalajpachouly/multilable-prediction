@@ -81,7 +81,7 @@ def build_conditional_prob_matrix(df, labels):
         cooc_norm[:, i] /= cooc[i, i]
     return cooc_norm
 
-def fancy_sample(df, labels, target_count, cond_prob):
+def nnls_sample(df, labels, target_count, cond_prob):
     """
     Perform stratified sampling to balance the dataset based on label co-occurrence.
 
@@ -166,9 +166,9 @@ def load_data_balanced(csv_path: str):
     # Load the dataset from a CSV file
     data = pd.read_csv(csv_path)
 
-    # Build conditional probability matrix and perform fancy sampling
+    # Build conditional probability matrix and perform NNLS sampling
     cooc_norm = build_conditional_prob_matrix(data, LABELS)
-    resampled_df = fancy_sample(data, LABELS, 600, cooc_norm)
+    resampled_df = nnls_sample(data, LABELS, 600, cooc_norm)
     data = resampled_df
 
     # Check if required columns exist
@@ -272,7 +272,7 @@ def prepare_data_for_deep_learning(X_train_texts, X_test_texts, max_words=5000, 
     - X_test_pad: Padded testing sequences.
     - tokenizer: Fitted Keras tokenizer.
     """
-    tokenizer = Tokenizer(num_words=max_words, oov_token='<OOV>')
+    tokenizer = Tokenizer(num_words=max_words, oov_token='')
     tokenizer.fit_on_texts(X_train_texts)
 
     X_train_seq = tokenizer.texts_to_sequences(X_train_texts)
@@ -564,7 +564,7 @@ def plot_top_features(selected_features, chi2_scores_max, data_type: str, top_k_
 # Model Training and Evaluation
 # ====================================
 
-def cross_validation_score_multilabel(classifier, X, y, n_splits=5):
+def cross_validation_score_multilabel(classifier, X, y, n_splits=10):
     """
     Perform cross-validation and compute average Recall and F1-score.
 
@@ -603,7 +603,7 @@ def cross_validation_score_multilabel(classifier, X, y, n_splits=5):
 
     return {'Recall': avg_recall, 'F1': avg_f1}
 
-def cross_validation_score_deep_learning(model_builder, X, y, n_splits=5, epochs=10, batch_size=32):
+def cross_validation_score_deep_learning(model_builder, X, y, n_splits=10, epochs=10, batch_size=32):
     """
     Perform cross-validation for a Deep Learning model and compute average Recall and F1-score.
 
@@ -905,7 +905,7 @@ def main(data_type='Unbalanced'):
     print("\n===== Training and Evaluating Deep Learning Model via Cross-Validation =====")
     deep_learning_cv_scores = cross_validation_score_deep_learning(
         lambda: build_deep_learning_model(X_train_tfidf.shape[1], y_train_np.shape[1]),
-        X_train_tfidf.toarray(), y_train_np, n_splits=5, epochs=100, batch_size=16
+        X_train_tfidf.toarray(), y_train_np, n_splits=10, epochs=100, batch_size=16
     )
     print("\nDeep Learning Cross-validation results:")
     print(f"Recall: {deep_learning_cv_scores['Recall']:.4f}")
@@ -956,7 +956,7 @@ def main(data_type='Unbalanced'):
     # ----------------------------
     print("\n===== Training and Evaluating CNN Model via Cross-Validation =====")
     cnn_cv_scores = cross_validation_score_deep_learning(
-        build_cnn_model, X_train_dl, y_train_np, n_splits=5, epochs=10, batch_size=32
+        build_cnn_model, X_train_dl, y_train_np, n_splits=10, epochs=10, batch_size=32
     )
     print("\nCNN Cross-validation results:")
     print(f"Recall: {cnn_cv_scores['Recall']:.4f}")
