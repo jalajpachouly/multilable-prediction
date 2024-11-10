@@ -1,475 +1,291 @@
-# Metrics Calculations from Output Data
+# Calculation of Model Performance Metrics Based on ML Execution Output
 
-In this document, we'll provide step-by-step calculations to derive the **Mean Recall**, **Mean F1-Score**, and **Hamming Loss** for each model using the provided output data. This process will help understand how the values in Tables 3 and 4 are obtained.
-
-
----
-
-## Unbalanced Dataset Calculations
-
-### 1. Multinomial Naive Bayes (MNB)
-
-#### Per-Fold Metrics:
-
-```
-Fold 1: Recall = 0.6426, F1-Score = 0.6405
-Fold 2: Recall = 0.6433, F1-Score = 0.6197
-Fold 3: Recall = 0.6642, F1-Score = 0.6623
-Fold 4: Recall = 0.6354, F1-Score = 0.6344
-Fold 5: Recall = 0.6357, F1-Score = 0.6446
-Fold 6: Recall = 0.6727, F1-Score = 0.6849
-Fold 7: Recall = 0.6307, F1-Score = 0.6333
-Fold 8: Recall = 0.6134, F1-Score = 0.5797
-Fold 9: Recall = 0.5694, F1-Score = 0.5497
-Fold 10: Recall = 0.5917, F1-Score = 0.5709
-```
-
-#### Calculating Mean Recall:
-
-\[
-\text{Mean Recall} = \frac{\sum_{i=1}^{10} \text{Recall}_i}{10}
-\]
-
-\[
-\text{Mean Recall} = \frac{0.6426 + 0.6433 + 0.6642 + 0.6354 + 0.6357 + 0.6727 + 0.6307 + 0.6134 + 0.5694 + 0.5917}{10}
-\]
-
-\[
-\text{Mean Recall} = \frac{6.2991}{10} = 0.6299
-\]
-
-#### Calculating Mean F1-Score:
-
-\[
-\text{Mean F1-Score} = \frac{\sum_{i=1}^{10} \text{F1-Score}_i}{10}
-\]
-
-\[
-\text{Mean F1-Score} = \frac{0.6405 + 0.6197 + 0.6623 + 0.6344 + 0.6446 + 0.6849 + 0.6333 + 0.5797 + 0.5497 + 0.5709}{10}
-\]
-
-\[
-\text{Mean F1-Score} = \frac{6.2200}{10} = 0.6220
-\]
-
-#### Hamming Loss:
-
-From the output:
-```
-Hamming Loss for MultinomialNB: 0.21762589928057555
-```
-
-**Summary:**
-
-- **Mean Recall:** 0.6299
-- **Mean F1-Score:** 0.6220
-- **Hamming Loss:** 0.2176
+This document provides a detailed calculation of the performance metrics for various models on both balanced and unbalanced datasets, based on the provided machine learning execution outputs. The metrics calculated are **Mean Recall**, **Mean F1-Score**, and **Hamming Loss**, which are presented in Table 3 and Table 4 of the paper.
 
 ---
 
-### 2. Logistic Regression (LR)
+## Table to Check
 
-#### Per-Fold Metrics:
+### Table 3. Model Performance on Balanced Dataset
 
-```
-Fold 1: Recall = 0.7561, F1-Score = 0.7772
-Fold 2: Recall = 0.6756, F1-Score = 0.6941
-Fold 3: Recall = 0.7457, F1-Score = 0.7677
-Fold 4: Recall = 0.6621, F1-Score = 0.6621
-Fold 5: Recall = 0.6758, F1-Score = 0.6872
-Fold 6: Recall = 0.7137, F1-Score = 0.7245
-Fold 7: Recall = 0.6640, F1-Score = 0.6883
-Fold 8: Recall = 0.6378, F1-Score = 0.6406
-Fold 9: Recall = 0.6806, F1-Score = 0.6992
-Fold 10: Recall = 0.7081, F1-Score = 0.7354
-```
+| Model                               | Mean Recall | Mean F1-Score | Hamming Loss |
+|-------------------------------------|-------------|---------------|--------------|
+| **Convolutional Neural Network (CNN)** | 0.9559      | 0.9505        | 0.1494       |
+| **Random Forest**                   | 0.8803      | 0.8717        | 0.1015       |
+| **Multilayer Perceptron (MLP)**     | 0.8533      | 0.8396        | 0.1944       |
+| **Logistic Regression**             | 0.8336      | 0.8096        | 0.1925       |
+| **Multinomial Naive Bayes**         | 0.7920      | 0.7944        | 0.1772       |
 
-#### Calculating Mean Recall:
+### Table 4. Model Performance on Unbalanced Dataset
 
-\[
-\text{Mean Recall} = \frac{\sum_{i=1}^{10} \text{Recall}_i}{10} = \frac{6.9195}{10} = 0.6919
-\]
-
-#### Calculating Mean F1-Score:
-
-\[
-\text{Mean F1-Score} = \frac{\sum_{i=1}^{10} \text{F1-Score}_i}{10} = \frac{7.0763}{10} = 0.7076
-\]
-
-#### Hamming Loss:
-
-From the output:
-```
-Hamming Loss for LogisticRegression: 0.19424460431654678
-```
-
-**Summary:**
-
-- **Mean Recall:** 0.6919
-- **Mean F1-Score:** 0.7076
-- **Hamming Loss:** 0.1942
+| Model                               | Mean Recall | Mean F1-Score | Hamming Loss |
+|-------------------------------------|-------------|---------------|--------------|
+| **Convolutional Neural Network (CNN)** | 0.7827      | 0.7708        | 0.1864       |
+| **Random Forest**                   | 0.7320      | 0.7478        | 0.2016       |
+| **Multilayer Perceptron (MLP)**     | 0.7473      | 0.7518        | 0.2231       |
+| **Logistic Regression**             | 0.6995      | 0.7155        | 0.2213       |
+| **Multinomial Naive Bayes**         | 0.6229      | 0.6095        | 0.2267       |
 
 ---
 
-### 3. Random Forest (RF)
+## Calculations Based on ML Execution Output
 
-#### Per-Fold Metrics:
+### Balanced Dataset
 
-```
-Fold 1: Recall = 0.7557, F1-Score = 0.7778
-Fold 2: Recall = 0.6865, F1-Score = 0.7135
-Fold 3: Recall = 0.7890, F1-Score = 0.8077
-Fold 4: Recall = 0.8029, F1-Score = 0.7724
-Fold 5: Recall = 0.6887, F1-Score = 0.7059
-Fold 6: Recall = 0.7465, F1-Score = 0.7367
-Fold 7: Recall = 0.7450, F1-Score = 0.7759
-Fold 8: Recall = 0.6343, F1-Score = 0.6434
-Fold 9: Recall = 0.7251, F1-Score = 0.7226
-Fold 10: Recall = 0.6763, F1-Score = 0.6920
-```
+#### **Multinomial Naive Bayes**
 
-#### Calculating Mean Recall:
+From the cross-validation results:
+
+- **Fold Recalls**: 0.7718, 0.7913, 0.7933, 0.7729, 0.8572, 0.6962, 0.8424, 0.8305, 0.7650, 0.7992
+- **Fold F1-Scores**: 0.7827, 0.7880, 0.7757, 0.7823, 0.8592, 0.7032, 0.8427, 0.8258, 0.7847, 0.8000
+
+Calculating **Mean Recall**:
 
 \[
-\text{Mean Recall} = \frac{\sum_{i=1}^{10} \text{Recall}_i}{10} = \frac{7.2500}{10} = 0.7250
+\text{Mean Recall} = \frac{1}{10} \sum_{i=1}^{10} \text{Recall}_i = \frac{0.7718 + 0.7913 + \dots + 0.7992}{10} = \mathbf{0.7920}
 \]
 
-#### Calculating Mean F1-Score:
+Calculating **Mean F1-Score**:
 
 \[
-\text{Mean F1-Score} = \frac{\sum_{i=1}^{10} \text{F1-Score}_i}{10} = \frac{7.3479}{10} = 0.7348
+\text{Mean F1-Score} = \frac{1}{10} \sum_{i=1}^{10} \text{F1}_i = \frac{0.7827 + 0.7880 + \dots + 0.8000}{10} = \mathbf{0.7944}
 \]
 
-#### Hamming Loss:
+**Hamming Loss**:
 
-From the output:
-```
-Hamming Loss for RandomForest: 0.1960431654676259
-```
-
-**Summary:**
-
-- **Mean Recall:** 0.7250
-- **Mean F1-Score:** 0.7348
-- **Hamming Loss:** 0.1960
+- Reported Hamming Loss: **0.1772**
 
 ---
 
-### 4. Multilayer Perceptron (MLP)
+#### **Logistic Regression**
 
-#### Cross-Validation Results:
+From the cross-validation results:
 
-```
-Recall: 0.7333
-F1-score: 0.7395
-```
+- **Fold Recalls**: 0.8427, 0.8515, 0.8306, 0.8201, 0.8732, 0.7965, 0.8530, 0.8618, 0.8022, 0.8040
+- **Fold F1-Scores**: 0.8092, 0.8244, 0.7884, 0.8001, 0.8599, 0.7665, 0.8331, 0.8384, 0.7891, 0.7864
 
-#### Hamming Loss:
+Calculating **Mean Recall**:
 
-From the output:
-```
-Hamming Loss for MLP Model: 0.18165467625899281
-```
+\[
+\text{Mean Recall} = \frac{1}{10} \sum_{i=1}^{10} \text{Recall}_i = \mathbf{0.8336}
+\]
 
-**Summary:**
+Calculating **Mean F1-Score**:
 
-- **Mean Recall:** 0.7333
-- **Mean F1-Score:** 0.7395
-- **Hamming Loss:** 0.1817
+\[
+\text{Mean F1-Score} = \frac{1}{10} \sum_{i=1}^{10} \text{F1}_i = \mathbf{0.8096}
+\]
+
+**Hamming Loss**:
+
+- Reported Hamming Loss: **0.1925**
 
 ---
 
-### 5. Convolutional Neural Network (CNN)
+#### **Random Forest**
 
-#### Per-Fold Metrics:
+From the cross-validation results:
 
-```
-Fold 1: Recall = 0.7824, F1-Score = 0.7873
-Fold 2: Recall = 0.7881, F1-Score = 0.7745
-Fold 3: Recall = 0.8843, F1-Score = 0.8409
-Fold 4: Recall = 0.7803, F1-Score = 0.7387
-Fold 5: Recall = 0.7260, F1-Score = 0.7430
-Fold 6: Recall = 0.8614, F1-Score = 0.8154
-Fold 7: Recall = 0.5735, F1-Score = 0.5627
-Fold 8: Recall = 0.7977, F1-Score = 0.7765
-Fold 9: Recall = 0.7862, F1-Score = 0.7631
-Fold 10: Recall = 0.7216, F1-Score = 0.7251
-```
+- **Fold Recalls**: 0.8568, 0.8872, 0.8944, 0.8657, 0.8997, 0.8605, 0.8927, 0.8979, 0.8813, 0.8664
+- **Fold F1-Scores**: 0.8477, 0.8775, 0.8814, 0.8589, 0.8897, 0.8445, 0.8851, 0.8906, 0.8808, 0.8610
 
-#### Calculating Mean Recall:
+Calculating **Mean Recall**:
 
 \[
-\text{Mean Recall} = \frac{7.7015}{10} = 0.7702
+\text{Mean Recall} = \frac{1}{10} \sum_{i=1}^{10} \text{Recall}_i = \mathbf{0.8803}
 \]
 
-#### Calculating Mean F1-Score:
+Calculating **Mean F1-Score**:
 
 \[
-\text{Mean F1-Score} = \frac{7.2272}{10} = 0.7227
+\text{Mean F1-Score} = \frac{1}{10} \sum_{i=1}^{10} \text{F1}_i = \mathbf{0.8717}
 \]
 
-However, the output reports:
+**Hamming Loss**:
 
-```
-CNN Cross-validation results:
-Recall: 0.7702
-F1-score: 0.7527
-```
-
-We'll use the reported **Mean F1-Score** from the output: 0.7527.
-
-#### Hamming Loss:
-
-From the output:
-
-```
-Hamming Loss for CNN Model: 0.22032374100719423
-```
-
-**Summary:**
-
-- **Mean Recall:** 0.7702
-- **Mean F1-Score:** 0.7527
-- **Hamming Loss:** 0.2203
+- Reported Hamming Loss: **0.1015**
 
 ---
 
-## Updated Table for Unbalanced Dataset
+#### **Multilayer Perceptron (MLP)**
 
-**Table: Model Performance on Unbalanced Dataset**
+From the deep learning cross-validation results:
 
-| Model                            | Mean Recall | Mean F1-Score | Hamming Loss |
-|----------------------------------|-------------|---------------|--------------|
-| Convolutional Neural Network (CNN) | 0.7702      | 0.7527        | 0.2203       |
-| Random Forest                      | 0.7250      | 0.7348        | 0.1960       |
-| Multilayer Perceptron (MLP)        | 0.7333      | 0.7395        | 0.1817       |
-| Logistic Regression                | 0.6919      | 0.7076        | 0.1942       |
-| Multinomial Naive Bayes            | 0.6299      | 0.6220        | 0.2176       |
+- **Recalls**: 0.8353, 0.8230, 0.8456, 0.8157, 0.8774, 0.8131, 0.8890, 0.9097, 0.8982, 0.8259
+- **F1-Scores**: 0.8202, 0.8150, 0.8165, 0.8211, 0.8649, 0.7906, 0.8909, 0.8780, 0.8823, 0.8168
+
+Calculating **Mean Recall**:
+
+\[
+\text{Mean Recall} = \frac{1}{10} \sum_{i=1}^{10} \text{Recall}_i = \mathbf{0.8533}
+\]
+
+Calculating **Mean F1-Score**:
+
+\[
+\text{Mean F1-Score} = \frac{1}{10} \sum_{i=1}^{10} \text{F1}_i = \mathbf{0.8396}
+\]
+
+**Hamming Loss**:
+
+- Reported Hamming Loss: **0.1944**
 
 ---
 
-## Balanced Dataset Calculations
+#### **Convolutional Neural Network (CNN)**
 
-### 1. Multinomial Naive Bayes (MNB)
+From the CNN cross-validation results:
 
-#### Per-Fold Metrics:
+- **Recalls**: 0.9462, 0.9565, 0.9726, 0.9476, 0.9451, 0.9360, 0.9842, 0.9566, 0.9563, 0.9577
+- **F1-Scores**: 0.9258, 0.9524, 0.9542, 0.9528, 0.9434, 0.9266, 0.9846, 0.9519, 0.9522, 0.9609
 
-```
-Fold 1: Recall = 0.7581, F1-Score = 0.7854
-Fold 2: Recall = 0.8041, F1-Score = 0.8128
-Fold 3: Recall = 0.7142, F1-Score = 0.7271
-Fold 4: Recall = 0.7712, F1-Score = 0.7780
-Fold 5: Recall = 0.7463, F1-Score = 0.7534
-Fold 6: Recall = 0.7667, F1-Score = 0.7909
-Fold 7: Recall = 0.7958, F1-Score = 0.7979
-Fold 8: Recall = 0.7644, F1-Score = 0.7732
-Fold 9: Recall = 0.8012, F1-Score = 0.8078
-Fold 10: Recall = 0.7694, F1-Score = 0.7783
-```
-
-#### Calculating Mean Recall:
+Calculating **Mean Recall**:
 
 \[
-\text{Mean Recall} = \frac{7.6915}{10} = 0.7691
+\text{Mean Recall} = \frac{1}{10} \sum_{i=1}^{10} \text{Recall}_i = \mathbf{0.9559}
 \]
 
-#### Calculating Mean F1-Score:
+Calculating **Mean F1-Score**:
 
 \[
-\text{Mean F1-Score} = \frac{7.8049}{10} = 0.7805
+\text{Mean F1-Score} = \frac{1}{10} \sum_{i=1}^{10} \text{F1}_i = \mathbf{0.9505}
 \]
 
-#### Hamming Loss:
+**Hamming Loss**:
 
-From the output:
-
-```
-Hamming Loss for MultinomialNB: 0.191793893129771
-```
-
-**Summary:**
-
-- **Mean Recall:** 0.7691
-- **Mean F1-Score:** 0.7805
-- **Hamming Loss:** 0.1918
+- Reported Hamming Loss: **0.1494**
 
 ---
 
-### 2. Logistic Regression (LR)
+### Unbalanced Dataset
 
-#### Per-Fold Metrics:
+#### **Multinomial Naive Bayes**
 
-```
-Fold 1: Recall = 0.8121, F1-Score = 0.8057
-Fold 2: Recall = 0.8299, F1-Score = 0.8073
-Fold 3: Recall = 0.7739, F1-Score = 0.7498
-Fold 4: Recall = 0.8237, F1-Score = 0.8095
-Fold 5: Recall = 0.7842, F1-Score = 0.7729
-Fold 6: Recall = 0.8091, F1-Score = 0.7955
-Fold 7: Recall = 0.8327, F1-Score = 0.7916
-Fold 8: Recall = 0.8343, F1-Score = 0.8074
-Fold 9: Recall = 0.8343, F1-Score = 0.8089
-Fold 10: Recall = 0.8498, F1-Score = 0.8184
-```
+From the cross-validation results:
 
-#### Calculating Mean Recall:
+- **Fold Recalls**: 0.6414, 0.6099, 0.6113, 0.6042, 0.6158, 0.5911, 0.5882, 0.6977, 0.6451, 0.6246
+- **Fold F1-Scores**: 0.6323, 0.5886, 0.5831, 0.5758, 0.5897, 0.5753, 0.5656, 0.7093, 0.6528, 0.6230
+
+Calculating **Mean Recall**:
 
 \[
-\text{Mean Recall} = \frac{8.1841}{10} = 0.8184
+\text{Mean Recall} = \frac{1}{10} \sum_{i=1}^{10} \text{Recall}_i = \mathbf{0.6229}
 \]
 
-#### Calculating Mean F1-Score:
+Calculating **Mean F1-Score**:
 
 \[
-\text{Mean F1-Score} = \frac{7.9669}{10} = 0.7967
+\text{Mean F1-Score} = \frac{1}{10} \sum_{i=1}^{10} \text{F1}_i = \mathbf{0.6095}
 \]
 
-#### Hamming Loss:
+**Hamming Loss**:
 
-From the output:
-
-```
-Hamming Loss for LogisticRegression: 0.19274809160305342
-```
-
-**Summary:**
-
-- **Mean Recall:** 0.8184
-- **Mean F1-Score:** 0.7967
-- **Hamming Loss:** 0.1927
+- Reported Hamming Loss: **0.2267**
 
 ---
 
-### 3. Random Forest (RF)
+#### **Logistic Regression**
 
-#### Per-Fold Metrics:
+From the cross-validation results:
 
-```
-Fold 1: Recall = 0.8584, F1-Score = 0.8596
-Fold 2: Recall = 0.8607, F1-Score = 0.8512
-Fold 3: Recall = 0.8714, F1-Score = 0.8665
-Fold 4: Recall = 0.8659, F1-Score = 0.8650
-Fold 5: Recall = 0.8780, F1-Score = 0.8731
-Fold 6: Recall = 0.8775, F1-Score = 0.8724
-Fold 7: Recall = 0.9300, F1-Score = 0.9176
-Fold 8: Recall = 0.8551, F1-Score = 0.8504
-Fold 9: Recall = 0.8549, F1-Score = 0.8459
-Fold 10: Recall = 0.8925, F1-Score = 0.8807
-```
+- **Fold Recalls**: 0.7486, 0.6686, 0.6600, 0.6725, 0.6929, 0.7153, 0.6276, 0.7885, 0.6997, 0.7216
+- **Fold F1-Scores**: 0.7631, 0.6888, 0.6659, 0.6729, 0.7057, 0.7457, 0.6545, 0.8178, 0.7137, 0.7267
 
-#### Calculating Mean Recall:
+Calculating **Mean Recall**:
 
 \[
-\text{Mean Recall} = \frac{8.7444}{10} = 0.8744
+\text{Mean Recall} = \frac{1}{10} \sum_{i=1}^{10} \text{Recall}_i = \mathbf{0.6995}
 \]
 
-#### Calculating Mean F1-Score:
+Calculating **Mean F1-Score**:
 
 \[
-\text{Mean F1-Score} = \frac{8.6824}{10} = 0.8682
+\text{Mean F1-Score} = \frac{1}{10} \sum_{i=1}^{10} \text{F1}_i = \mathbf{0.7155}
 \]
 
-#### Hamming Loss:
+**Hamming Loss**:
 
-From the output:
-
-```
-Hamming Loss for RandomForest: 0.11450381679389313
-```
-
-**Summary:**
-
-- **Mean Recall:** 0.8744
-- **Mean F1-Score:** 0.8682
-- **Hamming Loss:** 0.1145
+- Reported Hamming Loss: **0.2213**
 
 ---
 
-### 4. Multilayer Perceptron (MLP)
+#### **Random Forest**
 
-#### Cross-Validation Results:
+From the cross-validation results:
 
-```
-Recall: 0.8334
-F1-score: 0.8223
-```
+- **Fold Recalls**: 0.7357, 0.7634, 0.7598, 0.6976, 0.6953, 0.7697, 0.7239, 0.7715, 0.6798, 0.7235
+- **Fold F1-Scores**: 0.7474, 0.7657, 0.7652, 0.7261, 0.7180, 0.7670, 0.7468, 0.7973, 0.7053, 0.7390
 
-#### Hamming Loss:
+Calculating **Mean Recall**:
 
-From the output:
+\[
+\text{Mean Recall} = \frac{1}{10} \sum_{i=1}^{10} \text{Recall}_i = \mathbf{0.7320}
+\]
 
-```
-Hamming Loss for MLP Model: 0.19370229007633588
-```
+Calculating **Mean F1-Score**:
 
-**Summary:**
+\[
+\text{Mean F1-Score} = \frac{1}{10} \sum_{i=1}^{10} \text{F1}_i = \mathbf{0.7478}
+\]
 
-- **Mean Recall:** 0.8334
-- **Mean F1-Score:** 0.8223
-- **Hamming Loss:** 0.1937
+**Hamming Loss**:
+
+- Reported Hamming Loss: **0.2016**
 
 ---
 
-### 5. Convolutional Neural Network (CNN)
+#### **Multilayer Perceptron (MLP)**
 
-#### Per-Fold Metrics:
+From the deep learning cross-validation results:
 
-```
-Fold 1: Recall = 0.9042, F1-Score = 0.9209
-Fold 2: Recall = 0.9572, F1-Score = 0.9470
-Fold 3: Recall = 0.9183, F1-Score = 0.9203
-Fold 4: Recall = 0.9410, F1-Score = 0.9314
-Fold 5: Recall = 0.9249, F1-Score = 0.9322
-Fold 6: Recall = 0.9319, F1-Score = 0.9465
-Fold 7: Recall = 0.9354, F1-Score = 0.9359
-Fold 8: Recall = 0.9458, F1-Score = 0.9387
-Fold 9: Recall = 0.9565, F1-Score = 0.9394
-Fold 10: Recall = 0.9455, F1-Score = 0.9390
-```
+- **Recalls**: 0.8357, 0.7631, 0.6986, 0.6995, 0.7120, 0.7621, 0.7083, 0.8192, 0.7192, 0.7554
+- **F1-Scores**: 0.8295, 0.7685, 0.7127, 0.7166, 0.7295, 0.7472, 0.7125, 0.8242, 0.7134, 0.7638
 
-#### Calculating Mean Recall:
+Calculating **Mean Recall**:
 
 \[
-\text{Mean Recall} = \frac{9.3610}{10} = 0.9361
+\text{Mean Recall} = \frac{1}{10} \sum_{i=1}^{10} \text{Recall}_i = \mathbf{0.7473}
 \]
 
-#### Calculating Mean F1-Score:
+Calculating **Mean F1-Score**:
 
 \[
-\text{Mean F1-Score} = \frac{9.3508}{10} = 0.9351
+\text{Mean F1-Score} = \frac{1}{10} \sum_{i=1}^{10} \text{F1}_i = \mathbf{0.7518}
 \]
 
-#### Hamming Loss:
+**Hamming Loss**:
 
-From the output:
-
-```
-Hamming Loss for CNN Model: 0.10400763358778627
-```
-
-**Summary:**
-
-- **Mean Recall:** 0.9361
-- **Mean F1-Score:** 0.9351
-- **Hamming Loss:** 0.1040
+- Reported Hamming Loss: **0.2231**
 
 ---
 
-## Updated Table for Balanced Dataset
+#### **Convolutional Neural Network (CNN)**
 
-**Table: Model Performance on Balanced Dataset**
+From the CNN cross-validation results:
 
-| Model                            | Mean Recall | Mean F1-Score | Hamming Loss |
-|----------------------------------|-------------|---------------|--------------|
-| **Convolutional Neural Network (CNN)** | **0.9361**  | **0.9351**    | 0.1040       |
-| Random Forest                      | 0.8744      | 0.8682        | 0.1145       |
-| Multilayer Perceptron (MLP)        | 0.8334      | 0.8223        | 0.1937       |
-| Logistic Regression                | 0.8184      | 0.7967        | 0.1927       |
-| Multinomial Naive Bayes            | 0.7691      | 0.7805        | 0.1918       |
+- **Recalls**: 0.7587, 0.8604, 0.7243, 0.7501, 0.8100, 0.8586, 0.7636, 0.7259, 0.7842, 0.7916
+- **F1-Scores**: 0.7677, 0.8321, 0.7025, 0.7486, 0.7881, 0.8162, 0.7611, 0.7392, 0.7498, 0.8025
+
+Calculating **Mean Recall**:
+
+\[
+\text{Mean Recall} = \frac{1}{10} \sum_{i=1}^{10} \text{Recall}_i = \mathbf{0.7827}
+\]
+
+Calculating **Mean F1-Score**:
+
+\[
+\text{Mean F1-Score} = \frac{1}{10} \sum_{i=1}^{10} \text{F1}_i = \mathbf{0.7708}
+\]
+
+**Hamming Loss**:
+
+- Reported Hamming Loss: **0.1864**
 
 ---
 
 ## Conclusion
 
-The calculations above provide a step-by-step derivation of the Mean Recall, Mean F1-Score, and Hamming Loss for each model using the output data from your 10-fold cross-validation experiments. These updated values should replace any previous metrics to accurately reflect the performance of each model on both unbalanced and balanced datasets.
+The calculated **Mean Recall**, **Mean F1-Score**, and **Hamming Loss** for each model on both balanced and unbalanced datasets are presented in Table 3 and Table 4. These values are derived directly from the cross-validation and evaluation outputs provided, demonstrating the models' performance in the multi-label classification task.
 
+---
