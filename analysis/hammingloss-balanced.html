@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Model Performance With and Without Feature Selection Across Various K Values (Balanced Dataset)</title>
+    <title>Hamming Loss with and without Feature Selection (Balanced Dataset)</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -15,7 +15,7 @@
 </head>
 <body class="bg-light">
     <div class="container mt-5">
-        <h2 class="text-center mb-4">Model Performance With and Without Feature Selection Across Various K Values (Balanced Dataset)</h2>
+        <h2 class="text-center mb-4">Hamming Loss with and without Feature Selection (Balanced Dataset)</h2>
         <canvas id="trendGraph"></canvas>
     </div>
 
@@ -165,8 +165,8 @@ const deepLearning = [
                             display: true,
                             text: 'Hamming Loss'
                         },
-                        min: 0.01, // Start Y-axis from 0.60
-                        max: 0.30,
+                        min: 0.04, // Start Y-axis from 0.60
+                        max: 0.28,
                         ticks: {
                             stepSize: 0.02
                         }

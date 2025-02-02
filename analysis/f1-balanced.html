@@ -15,7 +15,7 @@
 </head>
 <body class="bg-light">
     <div class="container mt-5">
-        <h2 class="text-center mb-4">Model Performance With and Without Feature Selection Across Various K Values (Balanced Dataset)</h2>
+        <h2 class="text-center mb-4">F1 Score with and without Feature Selection  (Balanced Dataset)</h2>
         <canvas id="trendGraph"></canvas>
     </div>
 
@@ -163,8 +163,8 @@ const deepLearning = [
                             display: true,
                             text: 'F1 Score'
                         },
-                        min: 0.60, // Start Y-axis from 0.60
-                        max: 1.0,
+                        min: 0.64, // Start Y-axis from 0.60
+                        max: 0.95,
                         ticks: {
                             stepSize: 0.02
                         }
