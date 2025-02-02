@@ -156,21 +156,50 @@ const deepLearning = [
                     x: {
                         title: {
                             display: true,
-                            text: 'K Value'
-                        }
+                            text: 'K Value',
+														font: {
+								weight: 'bold', // Bold X-axis label
+								size: 14
+							}
+                        },
+							ticks: {
+							font: {
+								weight: 'bold', // Bold the scale values (numbers) on X-axis
+								size: 14
+							}
+						}
                     },
                     y: {
                         title: {
                             display: true,
-                            text: 'Recall'
+                            text: 'Recall',
+							font: {
+								weight: 'bold', // Bold Y-axis label
+								size: 14
+							}
                         },
                         min: 0.60, // Start Y-axis from 0.60
                         max: 0.95,
                         ticks: {
-                            stepSize: 0.02
+                            stepSize: 0.02,
+							font: {
+								weight: 'bold', // Bold the scale values (numbers) on Y-axis
+								size: 14
+							}
                         }
                     }
-                }
+                },
+					plugins: {
+					legend: {
+						labels: {
+							font: {
+								weight: 'bold', // Bold the legend text
+								size: 16
+							},
+							usePointStyle: true
+						}
+					}
+				}
             }
         });
     </script>
