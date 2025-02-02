@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Performance With and Without Feature Selection Across Various K Values (Unbalanced Dataset)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        canvas {
+            height: 700px !important; /* Keep increased height for better visibility */
+            background-color: white; /* Set a white background */
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <h2 class="text-center mb-4">Model Performance With and Without Feature Selection Across Various K Values (Unbalanced Dataset)</h2>
+        <canvas id="trendGraph"></canvas>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('trendGraph').getContext('2d');
+
+    		
+		// Data for the graph
+const kValues = [50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000, 1050, 1100, 1150, 1200, 1250, 1300, 1350, 1400, 1450, 1500, 1550, 1600, 1650, 1700, 1750, 1800, 1850, 1900, 1950, 2000, 11991];
+
+const multinomialNB = [
+  0.658914, 0.74027, 0.74536, 0.782834, 0.812119, 0.79689, 0.807053, 0.857642, 0.812591, 0.808165, 
+  0.838865, 0.837573, 0.83663, 0.863114, 0.837249, 0.879819, 0.869216, 0.818219, 0.843622, 0.865896, 
+  0.86198, 0.84847, 0.868129, 0.837363, 0.855557, 0.884339, 0.858021, 0.852113, 0.865919, 0.847315, 
+  0.845364, 0.856941, 0.851106, 0.872805, 0.859262, 0.864196, 0.857376, 0.88848, 0.861937, 0.866082, 
+  0.877782
+];
+
+const logisticRegression = [
+  0.697796, 0.750938, 0.758862, 0.781878, 0.82275, 0.806799, 0.798575, 0.838768, 0.816001, 0.798277, 
+  0.838727, 0.831433, 0.809993, 0.846129, 0.83267, 0.859178, 0.868691, 0.821036, 0.842912, 0.857861, 
+  0.862652, 0.827972, 0.847095, 0.84802, 0.8451, 0.874787, 0.842419, 0.85582, 0.866716, 0.843733, 
+  0.83663, 0.871988, 0.85257, 0.886058, 0.864671, 0.858229, 0.847396, 0.887082, 0.862595, 0.865278, 
+  0.896361
+];
+
+const randomForest = [
+  0.875515, 0.893223, 0.902909, 0.906779, 0.907407, 0.904452, 0.918959, 0.917418, 0.916972, 0.919206, 
+  0.919148, 0.922971, 0.902763, 0.905388, 0.917699, 0.917245, 0.919323, 0.905757, 0.908583, 0.911951, 
+  0.911313, 0.909271, 0.919742, 0.918434, 0.909414, 0.925987, 0.916521, 0.918634, 0.921985, 0.9148, 
+  0.916135, 0.920283, 0.917534, 0.909032, 0.914175, 0.917276, 0.91192, 0.926536, 0.910935, 0.920217, 
+  0.91291
+];
+
+const deepLearning = [
+  0.7907, 0.8295, 0.852, 0.8616, 0.879, 0.883, 0.8907, 0.8912, 0.9023, 0.8953, 
+  0.9075, 0.9045, 0.8847, 0.8925, 0.9097, 0.914, 0.9068, 0.8992, 0.8983, 0.9112, 
+  0.9061, 0.9056, 0.9178, 0.9154, 0.9102, 0.923, 0.9235, 0.9248, 0.9236, 0.9086, 
+  0.9061, 0.9297, 0.9181, 0.9266, 0.9185, 0.9175, 0.9169, 0.9254, 0.9236, 0.9054, 
+  0.9108
+];
+
+        // Function to find the highest value in a dataset
+        function findHighest(data) {
+            const maxValue = Math.max(...data);
+            const maxIndex = data.indexOf(maxValue);
+            return { maxValue, maxIndex };
+        }
+
+        // Get highest points for each dataset
+        const highestPoints = [
+            findHighest(multinomialNB),
+            findHighest(logisticRegression),
+            findHighest(randomForest),
+            findHighest(deepLearning)
+        ];
+
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: kValues.map(k => k === 11991 ? 'Without FS' : k),
+                datasets: [
+                    {
+                        label: 'MultinomialNB ',
+                        data: multinomialNB,
+                        borderColor: '#1f77b4',
+                        borderWidth: 2,
+                        fill: false,
+                        pointStyle: multinomialNB.map((_, i) =>
+                            i === highestPoints[0].maxIndex ? 'circle' : 'circle'),
+                        pointRadius: multinomialNB.map((_, i) =>
+                            i === highestPoints[0].maxIndex ? 8 : 3),
+                        pointBackgroundColor: multinomialNB.map((_, i) =>
+                            i === highestPoints[0].maxIndex ? '#1f77b4' : '#1f77b4'),
+                    },
+                    {
+                        label: 'LogisticRegression ',
+                        data: logisticRegression,
+                        borderColor: '#ff7f0e',
+                        borderWidth: 2,
+                        fill: false,
+                        pointStyle: logisticRegression.map((_, i) =>
+                            i === highestPoints[1].maxIndex ? 'circle' : 'circle'),
+                        pointRadius: logisticRegression.map((_, i) =>
+                            i === highestPoints[1].maxIndex ? 8 : 3),
+                        pointBackgroundColor: logisticRegression.map((_, i) =>
+                            i === highestPoints[1].maxIndex ? '#ff7f0e' : '#ff7f0e'),
+                    },
+                    {
+                        label: 'RandomForest ',
+                        data: randomForest,
+                        borderColor: '#2ca02c',
+                        borderWidth: 2,
+                        fill: false,
+                        pointStyle: randomForest.map((_, i) =>
+                            i === highestPoints[2].maxIndex ? 'circle' : 'circle'),
+                        pointRadius: randomForest.map((_, i) =>
+                            i === highestPoints[2].maxIndex ? 8 : 3),
+                        pointBackgroundColor: randomForest.map((_, i) =>
+                            i === highestPoints[2].maxIndex ? '#2ca02c' : '#2ca02c'),
+                    },
+                    {
+                        label: 'DeepLearning ',
+                        data: deepLearning,
+                        borderColor: '#d62728',
+                        borderWidth: 2,
+                        fill: false,
+                        pointStyle: deepLearning.map((_, i) =>
+                            i === highestPoints[3].maxIndex ? 'circle' : 'circle'),
+                        pointRadius: deepLearning.map((_, i) =>
+                            i === highestPoints[3].maxIndex ? 8 : 3),
+                        pointBackgroundColor: deepLearning.map((_, i) =>
+                            i === highestPoints[3].maxIndex ? '#d62728' : '#d62728'),
+                    },
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            usePointStyle: true
+                        }
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.dataset.label}: ${context.parsed.y}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'K Value'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'F1 Score'
+                        },
+                        min: 0.60, // Start Y-axis from 0.60
+                        max: 1.0,
+                        ticks: {
+                            stepSize: 0.02
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
