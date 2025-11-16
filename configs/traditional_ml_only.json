@@ -1,0 +1,69 @@
+{
+  "experiment_name": "Traditional ML - All Models - With Cross-Validation",
+  "output_directory": "output/traditional_ml",
+  
+  "data": {
+    "dataset_path": "data/dataset.csv",
+    "random_state": 42,
+    "test_size": 0.2,
+    "sample_size": null,
+    "sample_random_state": 42,
+    "run_balanced": true,
+    "run_unbalanced": true,
+    "balanced_target_count": 600
+  },
+  
+  "feature_engineering": {
+    "use_feature_selection": true,
+    "top_k": 50,
+    "top_k_plot": 20,
+    "use_wordcloud_vocabulary": true,
+    "max_words_per_label": 50
+  },
+  
+  "visualizations": {
+    "enabled": true,
+    "description_length": true,
+    "class_distribution": true,
+    "correlation_matrix": true,
+    "label_frequency": true,
+    "word_clouds": true,
+    "top_features": true,
+    "f1_scores": true,
+    "all_metrics_boxplot": true,
+    "nb_metrics": true
+  },
+  
+  "models": {
+    "traditional_ml": {
+      "enabled": true,
+      "run_cross_validation": true,
+      "cv_n_splits": 10,
+      "multinomial_nb": {
+        "enabled": true,
+        "use_classifier_chain": true
+      },
+      "logistic_regression": {
+        "enabled": true,
+        "use_classifier_chain": true,
+        "max_iter": 10000
+      },
+      "random_forest": {
+        "enabled": true,
+        "use_classifier_chain": true,
+        "n_estimators": 100,
+        "random_state": 42
+      }
+    },
+    "deep_learning": {
+      "enabled": false
+    }
+  },
+  
+  "output": {
+    "save_results_csv": true,
+    "save_cv_results_csv": true,
+    "results_filename": "traditional_ml_results.csv",
+    "cv_results_filename": "traditional_ml_cv.csv"
+  }
+}

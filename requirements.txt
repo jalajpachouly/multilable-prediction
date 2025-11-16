@@ -10,3 +10,4 @@ iterative-stratification==0.1.4
 tensorflow==2.12.0
 wordcloud==1.8.2
 transformers==4.30.0
+streamlit==1.28.0

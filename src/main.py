@@ -1,70 +1,214 @@
 """
 Multi-Label Classification for Bug Reports
 
-This script performs multi-label classification on bug reports using several machine learning models,
-including traditional classifiers and deep learning models like MLP and CNN. It includes functions
-for data loading, preprocessing, visualization, model training, evaluation, and result visualization.
-
-Author: Your Name
-Date: October 2023
+This refactored script uses modular utilities for better code organization.
 """
 
-# ====================================
-# Import Libraries
-# ====================================
+# Standard library imports
+import warnings
+warnings.filterwarnings('ignore')
 
-# Data manipulation and visualization
+# Third-party imports
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-from wordcloud import WordCloud
-
-# NLP and text processing
 import nltk
+import seaborn as sns
 
-# Machine learning and evaluation
-from sklearn.feature_extraction.text import TfidfVectorizer
+# Sklearn imports
 from sklearn.multioutput import ClassifierChain
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import recall_score, f1_score, hamming_loss
-from sklearn.feature_selection import chi2
 
-# Multi-label stratification
-from iterstrat.ml_stratifiers import MultilabelStratifiedShuffleSplit, MultilabelStratifiedKFold
-
-# Deep learning libraries
-import tensorflow as tf
-from tensorflow.keras.models import Sequential, Model
-from tensorflow.keras.layers import Dense, Dropout, Embedding, Conv1D, GlobalMaxPooling1D, Input
+# Keras imports
 from tensorflow.keras.callbacks import EarlyStopping
-from tensorflow.keras.preprocessing.text import Tokenizer
-from tensorflow.keras.preprocessing.sequence import pad_sequences
 
-# Transformer models
-from transformers import BertTokenizer, TFBertModel
-
-# Optimization
-from scipy.optimize import nnls
-
-# Suppress warnings
-import warnings
-warnings.filterwarnings('ignore')
+# Local imports
+from utils.config import LABELS, DATASET_PATH, TrainingConfig
+from utils.data_loading import load_data, load_data_balanced
+from utils.feature_engineering import prepare_data, prepare_data_for_deep_learning
+from utils.models import build_mlp_model, build_cnn_model
+from utils.evaluation import (
+    cross_validation_score_multilabel,
+    cross_validation_score_deep_learning,
+    evaluate_classifier,
+    evaluate_deep_learning_model
+)
+from utils.visualization import (
+    visualize_word_cloud,
+    visualize_description_length,
+    visualize_class_distribution,
+    visualize_correlation_matrix,
+    visualize_f1_scores,
+    plot_top_features
+)
 
 # Initialize NLTK resources
-nltk.download('wordnet')
-nltk.download('stopwords')
+nltk.download('wordnet', quiet=True)
+nltk.download('stopwords', quiet=True)
 
-# Define global labels
-LABELS = ["type_blocker", "type_bug", "type_documentation", "type_enhancement"]
 
-# ====================================
-# Data Loading and Preparation
-# ====================================
+def main(data_type='Unbalanced'):
+    """
+    Main function to execute data processing, model training, evaluation, and visualization.
 
-def build_conditional_prob_matrix(df, labels):
+    Parameters:
+    - data_type (str): Type of data to process ('Unbalanced' or 'Balanced').
+    """
+    config = TrainingConfig()
+    
+    # Load Data
+    csv_path = str(DATASET_PATH)
+    try:
+        if data_type == 'Balanced':
+            X_train_df, X_test_df, y_train_df, y_test_df = load_data_balanced(csv_path, LABELS)
+        else:
+            X_train_df, X_test_df, y_train_df, y_test_df = load_data(csv_path, LABELS)
+    except Exception as e:
+        print(f"Error loading data: {e}")
+        return
+
+    # Visualizations
+    visualize_description_length(X_train_df, data_type)
+    visualize_class_distribution(y_train_df, y_test_df, data_type)
+    visualize_correlation_matrix(y_train_df, data_type)
+
+    # Word Clouds and Vocabulary Collection
+    vocab_set = set()
+    for label in LABELS:
+        top_words = visualize_word_cloud(X_train_df, y_train_df, label)
+        vocab_set.update(top_words)
+
+    wordcloud_vocab = list(vocab_set)
+    print(f"\nTotal unique words collected from word clouds: {len(wordcloud_vocab)}")
+
+    # Prepare Data with Vocabulary
+    top_k = 50
+    try:
+        X_train_tfidf, X_test_tfidf, selected_features, chi2_scores_max, vector = prepare_data(
+            X_train_df, X_test_df, y_train_df, top_k=top_k, vocabulary=wordcloud_vocab
+        )
+    except Exception as e:
+        print(f"Error during data preparation: {e}")
+        return
+
+    if X_train_tfidf.shape[1] == 0:
+        raise ValueError("No features were selected.")
+
+    # Convert Labels to NumPy Arrays
+    y_train_np = y_train_df.to_numpy()
+    y_test_np = y_test_df.to_numpy()
+    label_names = y_test_df.columns.tolist()
+
+    # Plot Top Features
+    plot_top_features(selected_features, chi2_scores_max, data_type, top_k_plot=20)
+
+    # Define Classifiers
+    clf1 = ClassifierChain(MultinomialNB())
+    clf2 = ClassifierChain(LogisticRegression(max_iter=10000))
+    clf3 = ClassifierChain(RandomForestClassifier(n_estimators=100, random_state=42))
+
+    # Cross-Validation for Traditional Models
+    meth_cv = []
+    for clf, model_name in zip([clf1, clf2, clf3], ['MultinomialNB', 'LogisticRegression', 'RandomForest']):
+        print(f"\n===== Cross-Validating {model_name} =====")
+        cv_scores = cross_validation_score_multilabel(clf, X_train_tfidf, y_train_np)
+        meth_cv.append({'Model': model_name, 'Recall': cv_scores['Recall'], 'F1': cv_scores['F1']})
+    meth_cv = pd.DataFrame(meth_cv)
+    print("\nCross-validation results:")
+    print(meth_cv[['Model', 'Recall', 'F1']])
+
+    # Evaluate Classifiers on Test Set
+    results_nb = evaluate_classifier(clf1, 'MultinomialNB', X_train_tfidf, y_train_np, X_test_tfidf, y_test_np, label_names)
+    results_lr = evaluate_classifier(clf2, 'LogisticRegression', X_train_tfidf, y_train_np, X_test_tfidf, y_test_np, label_names)
+    results_rf = evaluate_classifier(clf3, 'RandomForest', X_train_tfidf, y_train_np, X_test_tfidf, y_test_np, label_names)
+
+    # Deep Learning Model - Cross-Validation
+    print("\n===== Training and Evaluating Deep Learning Model via Cross-Validation =====")
+    deep_learning_cv_scores = cross_validation_score_deep_learning(
+        lambda: build_mlp_model(X_train_tfidf.shape[1], y_train_np.shape[1]),
+        X_train_tfidf.toarray(), y_train_np, 
+        n_splits=config.n_cv_splits, 
+        epochs=config.epochs, 
+        batch_size=config.batch_size
+    )
+    print(f"\nDeep Learning Cross-validation results:")
+    print(f"Recall: {deep_learning_cv_scores['Recall']:.4f}")
+    print(f"F1-score: {deep_learning_cv_scores['F1']:.4f}")
+
+    # Train Deep Learning Model on Entire Training Set
+    print("\n===== Training Deep Learning Model on Entire Training Set =====")
+    deep_learning_model = build_mlp_model(input_dim=X_train_tfidf.shape[1], output_dim=y_train_np.shape[1])
+    early_stop = EarlyStopping(monitor='val_loss', patience=config.early_stopping_patience, restore_best_weights=True)
+
+    deep_learning_model.fit(
+        X_train_tfidf.toarray(),
+        y_train_np,
+        epochs=config.epochs,
+        batch_size=config.batch_size,
+        validation_split=config.validation_split,
+        callbacks=[early_stop],
+        verbose=0
+    )
+
+    # Evaluate Deep Learning Model on Test Set
+    results_dl = evaluate_deep_learning_model(deep_learning_model, X_test_tfidf, y_test_np, 'MLP', label_names)
+
+    # Prepare Data for CNN
+    X_train_dl, X_test_dl, tokenizer = prepare_data_for_deep_learning(
+        X_train_df['report'], X_test_df['report'], max_words=5000, max_len=100
+    )
+
+    # Parameters for CNN
+    vocab_size = min(len(tokenizer.word_index) + 1, 5000)
+    embedding_dim = 100
+    max_len = X_train_dl.shape[1]
+    output_dim = y_train_np.shape[1]
+
+    # Cross-Validation for CNN Model
+    print("\n===== Training and Evaluating CNN Model via Cross-Validation =====")
+    cnn_cv_scores = cross_validation_score_deep_learning(
+        lambda: build_cnn_model(vocab_size, embedding_dim, max_len, output_dim),
+        X_train_dl, y_train_np, n_splits=10, epochs=10, batch_size=32
+    )
+    print(f"\nCNN Cross-validation results:")
+    print(f"Recall: {cnn_cv_scores['Recall']:.4f}")
+    print(f"F1-score: {cnn_cv_scores['F1']:.4f}")
+
+    # Train CNN Model on Entire Training Set
+    print("\n===== Training CNN Model on Entire Training Set =====")
+    cnn_model = build_cnn_model(vocab_size, embedding_dim, max_len, output_dim)
+    early_stop = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)
+
+    cnn_model.fit(
+        X_train_dl, y_train_np,
+        epochs=20, batch_size=32,
+        validation_split=0.2,
+        callbacks=[early_stop],
+        verbose=1
+    )
+
+    # Evaluate CNN Model on Test Set
+    results_cnn = evaluate_deep_learning_model(cnn_model, X_test_dl, y_test_np, 'CNN', label_names)
+
+    # Combine Results
+    combined_results = results_nb + results_lr + results_rf + results_dl + results_cnn
+    df_results = pd.DataFrame(combined_results)
+    df_results['Hamming Loss'] = pd.to_numeric(df_results['Hamming Loss'], errors='coerce')
+
+    # Visualization of Results
+    sns.set(style="whitegrid")
+    visualize_f1_scores(df_results, data_type)
+
+    print("\nAll processes completed successfully.")
+
+
+if __name__ == "__main__":
+    print("\nProcessing with Unbalanced Data.")
+    main(data_type='Unbalanced')
+    print("\n---------------------------------------------------------")
+    print("\nProcessing with Balanced Data.")
+    main(data_type='Balanced')
     """
     Build a conditional probability matrix for label co-occurrence.
 
