@@ -1,109 +1,123 @@
 {
-  "experiment_name": "Quick Test - All Models Enabled",
-  "output_directory": "output/quick_test",
-  
-  "data": {
-    "dataset_path": "data/dataset.csv",
-    "random_state": 42,
-    "test_size": 0.2,
-    "sample_size": 100,
-    "sample_random_state": 42,
-    "run_balanced": true,
-    "run_unbalanced": true,
-    "balanced_target_count": 600
+  "output": {
+    "cv_results_filename": "cv_results.csv",
+    "results_filename": "quick_test_results.csv",
+    "save_results_csv": true,
+    "save_cv_results_csv": true
   },
-  
-  "feature_engineering": {
-    "use_feature_selection": true,
-    "top_k": 50,
-    "top_k_plot": 20,
-    "use_wordcloud_vocabulary": true,
-    "max_words_per_label": 50,
-    "tfidf": {
-      "ngram_range": [1, 2],
-      "min_df": 1,
-      "use_idf": true
-    }
-  },
-  
-  "visualizations": {
-    "enabled": true,
-    "description_length": true,
-    "class_distribution": true,
-    "correlation_matrix": true,
-    "label_frequency": true,
-    "word_clouds": true,
-    "top_features": true,
-    "f1_scores": true,
-    "all_metrics_boxplot": true,
-    "nb_metrics": true
-  },
-  
   "models": {
     "traditional_ml": {
-      "enabled": true,
-      "run_cross_validation": true,
-      "cv_n_splits": 10,
-      "multinomial_nb": {
-        "enabled": true,
-        "use_classifier_chain": true
-      },
-      "logistic_regression": {
-        "enabled": true,
-        "use_classifier_chain": true,
-        "max_iter": 10000
-      },
       "random_forest": {
-        "enabled": true,
         "use_classifier_chain": true,
         "n_estimators": 100,
-        "random_state": 42
-      }
+        "random_state": 42,
+        "enabled": true
+      },
+      "logistic_regression": {
+        "use_classifier_chain": true,
+        "max_iter": 10000,
+        "enabled": true
+      },
+      "multinomial_nb": {
+        "use_classifier_chain": true,
+        "enabled": true
+      },
+      "cv_n_splits": 10,
+      "run_cross_validation": false,
+      "enabled": true
+    },
+    "multi_class": {
+      "cv_n_splits": 5,
+      "deep_learning": {
+        "batch_size": 32,
+        "validation_split": 0.2,
+        "epochs": 50,
+        "enabled": false,
+        "architecture": "mlp"
+      },
+      "n_estimators": 200,
+      "run_cross_validation": false,
+      "max_iter": 1000,
+      "enabled": false,
+      "algorithm": "logistic_regression"
     },
     "deep_learning": {
-      "enabled": true,
       "mlp": {
-        "enabled": true,
-        "run_cross_validation": true,
-        "cv_n_splits": 10,
-        "cv_epochs": 100,
         "cv_batch_size": 16,
-        "epochs": 100,
         "batch_size": 16,
+        "cv_n_splits": 10,
+        "run_cross_validation": false,
         "validation_split": 0.2,
+        "epochs": 100,
+        "enabled": false,
         "early_stopping_patience": 5,
+        "cv_epochs": 100,
         "architecture": {
+          "layer2_dropout": 0.5,
           "layer1_units": 256,
           "layer1_dropout": 0.5,
-          "layer2_units": 128,
-          "layer2_dropout": 0.5
+          "layer2_units": 128
         }
       },
       "cnn": {
-        "enabled": true,
-        "run_cross_validation": true,
-        "cv_n_splits": 10,
-        "cv_epochs": 10,
         "cv_batch_size": 32,
-        "epochs": 20,
         "batch_size": 32,
-        "validation_split": 0.2,
-        "early_stopping_patience": 5,
-        "max_words": 5000,
-        "max_len": 100,
-        "embedding_dim": 100,
         "conv_filters": 128,
-        "conv_kernel_size": 5,
+        "embedding_dim": 100,
+        "cv_n_splits": 10,
+        "run_cross_validation": false,
+        "enabled": false,
+        "early_stopping_patience": 5,
+        "max_len": 100,
+        "max_words": 5000,
+        "dropout": 0.5,
         "dense_units": 128,
-        "dropout": 0.5
-      }
+        "validation_split": 0.2,
+        "epochs": 20,
+        "conv_kernel_size": 5,
+        "cv_epochs": 10
+      },
+      "enabled": false
     }
   },
-  
-  "output": {
-    "save_results_csv": true,
-    "save_cv_results_csv": true,
-    "results_filename": "quick_test_results.csv",
-    "cv_results_filename": "cv_results.csv"
-  }
+  "experiment_name": "Quick Test - All Models Enabled",
+  "feature_engineering": {
+    "max_words_per_label": 50,
+    "top_k_plot": 20,
+    "top_k": 50,
+    "tfidf": {
+      "use_idf": true,
+      "min_df": 1,
+      "ngram_range": [
+        1,
+        2
+      ]
+    },
+    "use_wordcloud_vocabulary": true,
+    "use_feature_selection": true
+  },
+  "visualizations": {
+    "correlation_matrix": true,
+    "nb_metrics": true,
+    "f1_scores": true,
+    "class_distribution": true,
+    "word_clouds": true,
+    "all_metrics_boxplot": true,
+    "label_frequency": true,
+    "top_features": true,
+    "enabled": true,
+    "description_length": true
+  },
+  "output_directory": "output/quick_test",
+  "data": {
+    "dataset_path": "data/dataset.csv",
+    "run_unbalanced": true,
+    "sample_size": 100,
+    "test_size": 0.2,
+    "run_balanced": true,
+    "balanced_target_count": 600,
+    "random_state": 42,
+    "sample_random_state": 42
+  },
+  "problem_type": "multi_label"
 }
