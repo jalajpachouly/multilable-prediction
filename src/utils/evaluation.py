@@ -48,7 +48,13 @@ def cross_validation_score_multilabel(
     avg_recall = np.mean(recall_scores)
     avg_f1 = np.mean(f1_scores)
 
-    return {'Recall': avg_recall, 'F1': avg_f1}
+    return {
+        'Recall': avg_recall,
+        'F1': avg_f1,
+        # Keep fold-wise scores for downstream significance testing
+        'fold_recall': recall_scores,
+        'fold_f1': f1_scores,
+    }
 
 
 def cross_validation_score_deep_learning(
@@ -111,7 +117,12 @@ def cross_validation_score_deep_learning(
     avg_recall = np.mean(recall_scores)
     avg_f1 = np.mean(f1_scores)
 
-    return {'Recall': avg_recall, 'F1': avg_f1}
+    return {
+        'Recall': avg_recall,
+        'F1': avg_f1,
+        'fold_recall': recall_scores,
+        'fold_f1': f1_scores,
+    }
 
 
 def evaluate_classifier(
